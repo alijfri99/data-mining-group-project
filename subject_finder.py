@@ -1,6 +1,3 @@
-from selenium import webdriver
-
-
 class SubjectFinder:
     def __init__(self, driver, url):
         self.driver = driver
