@@ -1,30 +1,40 @@
 class DataExtractor:
-    def __init__(self, driver, courses):
+    def __init__(self, driver, subjects):
         self.driver = driver
-        self.courses = courses
+        self.subjects = subjects
 
-    def extract_data(self):
-        result = list()
-        for course in self.courses:
-            course_data = list()
-            self.driver.get(course)
-            course_data.append("University of Glasgow")
-            course_data.append("Glas")
-            course_data.append(self.extract_course_school())
-            course_data.append(self.extract_course_title())
-            course_data.append(self.extract_course_aims())
-
-            result.append(course_data)
+    def extract_all_subjects_data(self):
+        result = {}
+        for subject in self.subjects:
+            self.driver.get(subject)
+            self.click_print_friendly_btn()
+            page_courses = self.extract_all_courses_in_page()
+            result = {**result, **page_courses}
         return result
 
-    def extract_course_school(self):
-        school = self.driver.find_element_by_xpath("/html/body/div[2]/div[2]/div/div/div/main/div[1]/ul/li[2]")
-        return school.text[8:]
+    def click_print_friendly_btn(self):
+        print_friendly_btn_xpath = "//a[contains(text(),'in print friendly format')]"
+        print_friendly_btn = self.driver.find_element_by_xpath(print_friendly_btn_xpath)
+        print_friendly_btn.click()
 
-    def extract_course_title(self):
-        course_title = self.driver.find_element_by_xpath("/html/body/div[2]/div[2]/div/div/div/main/div[1]/h2")
-        return course_title.text
+    def extract_all_courses_in_page(self):
+        all_information_nodes_xpath = "//div[contains(@class,'maincontent')]/*"
+        all_information_nodes = self.driver.find_elements_by_xpath(all_information_nodes_xpath)
+        print(f'all_information_nodes count : {len(all_information_nodes)}')
 
-    def extract_course_aims(self):
-        course_aims = self.driver.find_element_by_xpath("/html/body/div[2]/div[2]/div/div/div/main/div[1]/div[7]")
-        return course_aims.text
+        all_courses_data = {}
+        current_course = ''
+        current_attribute = ''
+        for node in all_information_nodes:
+            if node.tag_name == 'h2':
+                current_course = node.get_attribute('innerText')
+                all_courses_data[current_course] = {}
+            elif node.tag_name == 'h3':
+                current_attribute = node.get_attribute('innerText')
+                all_courses_data[current_course][current_attribute] = []
+            else:
+                try:
+                    all_courses_data[current_course][current_attribute].append(node.get_attribute('innerText'))
+                except KeyError:
+                    pass
+        return all_courses_data
