@@ -1,7 +1,8 @@
 .idea/
 __pycache__/
 **/*.json
+**/*.csv
 main.spec
 
 venv/
-
+.ipynb_checkpoints/

@@ -4,6 +4,7 @@ from data_extractor import DataExtractor
 
 import json
 import platform
+
 if platform.system() == 'Windows':
     PATH = "C:\Program Files (x86)\chromedriver\chromedriver.exe"
 else:
@@ -20,8 +21,7 @@ subjects = subject_finder.find_subjects()
 data_extractor = DataExtractor(driver, subjects)
 data = data_extractor.extract_all_subjects_data()
 
-with open('data4.json', 'w') as fp:
-    json.dump(data, fp,indent=4)
-
+with open('data6.json', 'w') as fp:
+    json.dump(data, fp, indent=4)
 
 driver.close()

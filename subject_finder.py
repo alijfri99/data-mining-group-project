@@ -10,7 +10,7 @@ class SubjectFinder:
         i = 0
         for link in links:
             result.append(link.get_attribute('href'))
-            if i > 5:
-                break
-            i +=1
+            # if i > 0:
+            #     break
+            # i += 1
         return result

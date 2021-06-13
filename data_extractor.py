@@ -5,11 +5,17 @@ class DataExtractor:
 
     def extract_all_subjects_data(self):
         result = {}
+        result['all_courses'] = []
+        subjects_done_count = 0
         for subject in self.subjects:
             self.driver.get(subject)
             self.click_print_friendly_btn()
             page_courses = self.extract_all_courses_in_page()
-            result = {**result, **page_courses}
+            for key, value in page_courses.items():
+                value['Course Name'] = key
+                result['all_courses'].append(value)
+            subjects_done_count += 1
+            print(f'{subjects_done_count} of {len(self.subjects)} subjects done ')
         return result
 
     def click_print_friendly_btn(self):
@@ -29,12 +35,22 @@ class DataExtractor:
             if node.tag_name == 'h2':
                 current_course = node.get_attribute('innerText')
                 all_courses_data[current_course] = {}
+                current_attribute = 'Course Name'
             elif node.tag_name == 'h3':
                 current_attribute = node.get_attribute('innerText')
-                all_courses_data[current_course][current_attribute] = []
+                all_courses_data[current_course][current_attribute] = ''
             else:
-                try:
-                    all_courses_data[current_course][current_attribute].append(node.get_attribute('innerText'))
-                except KeyError:
-                    pass
+                if current_attribute == 'Course Name':
+                    child_elements_titles = node.find_elements_by_xpath('.//strong')
+                    child_elements_data = node.find_elements_by_xpath('./*')
+                    for i in range(len(child_elements_titles)):
+                        title = child_elements_titles[i].get_attribute('innerText')
+                        text = child_elements_data[i].get_attribute('innerText').replace(title, '')
+                        all_courses_data[current_course][title] = text
+
+                else:
+                    try:
+                        all_courses_data[current_course][current_attribute] += node.get_attribute('innerText')
+                    except KeyError:
+                        pass
         return all_courses_data
