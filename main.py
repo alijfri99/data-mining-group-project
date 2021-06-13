@@ -21,8 +21,7 @@ data_extractor = DataExtractor(driver, subjects)
 data = data_extractor.extract_all_subjects_data()
 
 with open('data4.json', 'w') as fp:
-    json.dump(data, fp)
+    json.dump(data, fp,indent=4)
 
 
-print(data)
 driver.close()
