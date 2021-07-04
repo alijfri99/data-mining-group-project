@@ -1,11 +1,14 @@
+import pandas as pd
+
 class DataExtractor:
     def __init__(self, driver, subjects):
         self.driver = driver
         self.subjects = subjects
+        self.df_links = pd.read_csv('output.csv')
 
     def extract_all_subjects_data(self):
-        result = {}
-        result['all_courses'] = []
+
+        result = []
         subjects_done_count = 0
         for subject in self.subjects:
             self.driver.get(subject)
@@ -13,8 +16,13 @@ class DataExtractor:
             page_courses = self.extract_all_courses_in_page()
             for key, value in page_courses.items():
                 value['Course Name'] = key
-                result['all_courses'].append(value)
+                value['Course Link'] = "https://www.gla.ac.uk/coursecatalogue/course/?code="+key.split(' ')[-1]
+
+                result.append(value)
+
             subjects_done_count += 1
+            # if subjects_done_count > 0:
+            #     break
             print(f'{subjects_done_count} of {len(self.subjects)} subjects done ')
         return result
 

@@ -21,7 +21,7 @@ subjects = subject_finder.find_subjects()
 data_extractor = DataExtractor(driver, subjects)
 data = data_extractor.extract_all_subjects_data()
 
-with open('data6.json', 'w') as fp:
+with open('data7.json', 'w') as fp:
     json.dump(data, fp, indent=4)
 
 driver.close()
