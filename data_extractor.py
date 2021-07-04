@@ -8,3 +8,4 @@ class DataExtractor:
             self.driver.get(subject)
             element = self.driver.find_element_by_xpath("//a[@href='JavaScript:printCatalogue()']")
             element.click()
+            
